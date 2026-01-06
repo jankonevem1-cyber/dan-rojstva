@@ -1,119 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="sl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dan rojstnega dne</title>
+
   <style>
-    body { font-family: system-ui, Arial, sans-serif; background:#f6f7fb; margin:0; }
-    .wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px; }
-    .card { background:white; width:min(520px, 100%); border-radius:16px; padding:20px; box-shadow:0 8px 30px rgba(0,0,0,.08); }
-    h1 { margin:0 0 10px; font-size:22px; }
-    p { margin:0 0 16px; color:#444; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; }
-    input[type="date"], input[type="text"] {
-      flex:1;
-      padding:12px 12px;
-      border:1px solid #ddd;
-      border-radius:12px;
-      font-size:16px;
-      outline:none;
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+
+    .card {
+      background: white;
+      padding: 32px;
+      border-radius: 20px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 26px;
+    }
+
+    p {
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      margin-top: 12px;
+      outline: none;
+    }
+
     button {
-      padding:12px 14px;
-      border:0;
-      border-radius:12px;
-      font-size:16px;
-      cursor:pointer;
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
     }
-    .btn { background:#2563eb; color:white; }
-    .btn:active { transform: translateY(1px); }
+
+    button:hover {
+      background: #5a67d8;
+    }
+
     .result {
-      margin-top:14px;
-      padding:12px;
-      border-radius:12px;
-      background:#eef2ff;
-      font-weight:700;
-      text-align:center;
-      min-height:24px;
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: bold;
+      display: none;
     }
-    .hint { margin-top:10px; font-size:13px; color:#666; }
-    code { background:#f3f4f6; padding:2px 6px; border-radius:8px; }
+
+    .ok {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .err {
+      background: #fee2e2;
+      color: #7f1d1d;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Dan rojstnega dne</h1>
-      <p>Vpiši datum in izpiše se dan v tednu (v slovenščini).</p>
 
-      <div class="row">
-        <input id="datum" type="date" />
-        <button class="btn" id="gumb">Izračunaj</button>
-      </div>
+  <div class="card">
+    <h1>Dan rojstnega dne</h1>
+    <p>Vpiši datum rojstva in izveš, kateri dan v tednu je bil.</p>
 
-      <div class="result" id="rezultat"></div>
-      <div class="hint">
-        Če hočeš, lahko datum tudi ročno vpišeš v obliki <code>YYYY-MM-DD</code> (npr. 1933-06-05).
-      </div>
-    </div>
+    <input id="datum" type="date">
+
+    <button onclick="izracunaj()">Izračunaj</button>
+
+    <div id="rezultat" class="result"></div>
   </div>
 
   <script>
-    // Dan v tednu brez težav s časovnimi pasovi:
-    // Uporabimo UTC (Date.UTC) in getUTCDay().
-    const dnevi = ["NEDELJA","PONEDELJEK","TOREK","SREDA","ČETRTEK","PETEK","SOBOTA"];
+    const dnevi = [
+      "NEDELJA",
+      "PONEDELJEK",
+      "TOREK",
+      "SREDA",
+      "ČETRTEK",
+      "PETEK",
+      "SOBOTA"
+    ];
 
-    function izracunajDan(yyyy, mm, dd) {
-      const t = Date.UTC(yyyy, mm - 1, dd);      // mm-1 ker JS meseci 0..11
-      const d = new Date(t);
-      return dnevi[d.getUTCDay()];               // 0..6 (ned..sob)
-    }
-
-    function prikazi() {
-      const el = document.getElementById("datum");
+    function izracunaj() {
+      const input = document.getElementById("datum").value;
       const out = document.getElementById("rezultat");
-      const v = (el.value || "").trim();
 
-      if (!v) {
-        out.textContent = "Najprej izberi datum.";
-        out.style.background = "#fee2e2";
+      if (!input) {
+        out.textContent = "Prosim, izberi datum.";
+        out.className = "result err";
+        out.style.display = "block";
         return;
       }
 
-      // pričakujemo YYYY-MM-DD
-      const m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (!m) {
-        out.textContent = "Napačen format datuma (npr. 1933-06-05).";
-        out.style.background = "#fee2e2";
-        return;
-      }
+      const d = new Date(input + "T00:00:00");
+      const dan = dnevi[d.getDay()];
 
-      const leto = Number(m[1]);
-      const mesec = Number(m[2]);
-      const dan = Number(m[3]);
-
-      // osnovna validacija datuma
-      const test = new Date(Date.UTC(leto, mesec - 1, dan));
-      if (test.getUTCFullYear() !== leto || (test.getUTCMonth() + 1) !== mesec || test.getUTCDate() !== dan) {
-        out.textContent = "Ta datum ne obstaja.";
-        out.style.background = "#fee2e2";
-        return;
-      }
-
-      const danVTednu = izracunajDan(leto, mesec, dan);
-      out.textContent = `To je bil ${danVTednu}.`;
-      out.style.background = "#dcfce7";
+      out.textContent = "To je bil " + dan + ".";
+      out.className = "result ok";
+      out.style.display = "block";
     }
-
-    document.getElementById("gumb").addEventListener("click", prikazi);
-    document.getElementById("datum").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") prikazi();
-    });
-
-    // (opcijsko) nastavi primer datuma
-    document.getElementById("datum").value = "1933-06-05";
-    prikazi();
   </script>
+
 </body>
 </html>

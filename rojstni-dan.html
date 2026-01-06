@@ -1,33 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dan rojstnega dne</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dan rojstnega dne</title>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1020;color:#e5e7eb;min-height:100vh;display:flex;justify-content:center}
+    .wrap{width:min(920px,100%);padding:18px}
 
-<style>
-  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#9e9e9e;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
-  .card{background:white;padding:32px;border-radius:20px;max-width:420px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.25);text-align:center}
-  .topbar{max-width:420px;width:100%;margin:0 auto 12px;display:flex;justify-content:space-between;gap:10px}
-  a{color:#111;text-decoration:none;font-weight:800}
-  a:hover{text-decoration:underline}
+    /* MENI */
+    .nav{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      padding:12px 14px; border:1px solid rgba(255,255,255,.12); border-radius:16px;
+      background:rgba(255,255,255,.06); box-shadow:0 20px 60px rgba(0,0,0,.35);
+    }
+    .brand{font-weight:1000; letter-spacing:.02em}
+    .links{display:flex; gap:8px; flex-wrap:wrap}
+    .links a{
+      text-decoration:none; color:#e5e7eb; font-weight:900;
+      padding:10px 12px; border-radius:14px; border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+    }
+    .links a:hover{filter:brightness(1.06)}
+    .links a.active{background:#2563eb;border-color:transparent}
 
-  h1{margin:0 0 8px;font-size:26px}
-  p{margin:0 0 10px;color:#555}
-  input{width:100%;padding:14px;font-size:16px;border-radius:12px;border:1px solid #ccc;margin-top:12px;box-sizing:border-box}
-  button{width:100%;margin-top:16px;padding:14px;font-size:16px;border:none;border-radius:12px;background:#667eea;color:white;cursor:pointer;font-weight:900}
-  button:hover{background:#5a67d8}
-  .result{margin-top:20px;padding:16px;border-radius:12px;font-weight:bold;display:none}
-  .ok{background:#d1fae5;color:#065f46}
-  .err{background:#fee2e2;color:#7f1d1d}
-</style>
+    /* CARD */
+    .card{margin-top:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+    h1{margin:0 0 8px;font-size:30px}
+    p{margin:0 0 14px;color:rgba(229,231,235,.75)}
+
+    input{width:100%;padding:14px;font-size:16px;border-radius:14px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25);color:#e5e7eb;box-sizing:border-box}
+    button{width:100%;margin-top:12px;padding:14px;font-size:16px;border:none;border-radius:14px;background:#2563eb;color:white;cursor:pointer;font-weight:1000}
+    button:hover{filter:brightness(1.05)}
+
+    .result{margin-top:14px;padding:14px;border-radius:16px;font-weight:1000;display:none;border:1px solid rgba(255,255,255,.12)}
+    .ok{background:rgba(22,163,74,.18)}
+    .err{background:rgba(239,68,68,.18)}
+    .small{margin-top:8px;color:rgba(229,231,235,.70);font-size:13px}
+  </style>
 </head>
-
 <body>
-  <div style="width:100%;max-width:420px">
-    <div class="topbar">
-      <a href="index.html">← Nazaj</a>
-      <a href="vreme.html">Vreme →</a>
+  <div class="wrap">
+    <div class="nav">
+      <div class="brand">Moja spletna stran</div>
+      <div class="links">
+        <a href="index.html">Domov</a>
+        <a class="active" href="rojstni-dan.html">Dan rojstnega dne</a>
+        <a href="vreme.html">Vreme</a>
+      </div>
     </div>
 
     <div class="card">
@@ -36,33 +57,33 @@
 
       <input id="datum" type="date">
       <button onclick="izracunaj()">Izračunaj</button>
+
       <div id="rezultat" class="result"></div>
+      <div class="small">Namig: če se ne posodobi takoj, osveži stran (Ctrl+F5).</div>
     </div>
   </div>
 
-<script>
-  const dnevi = ["NEDELJA","PONEDELJEK","TOREK","SREDA","ČETRTEK","PETEK","SOBOTA"];
+  <script>
+    const dnevi = ["NEDELJA","PONEDELJEK","TOREK","SREDA","ČETRTEK","PETEK","SOBOTA"];
 
-  function izracunaj() {
-    const input = document.getElementById("datum").value;
-    const out = document.getElementById("rezultat");
+    function izracunaj() {
+      const input = document.getElementById("datum").value;
+      const out = document.getElementById("rezultat");
 
-    if (!input) {
-      out.textContent = "Prosim, izberi datum.";
-      out.className = "result err";
+      if (!input) {
+        out.textContent = "Prosim, izberi datum.";
+        out.className = "result err";
+        out.style.display = "block";
+        return;
+      }
+
+      const d = new Date(input + "T00:00:00");
+      const dan = dnevi[d.getDay()];
+
+      out.textContent = "To je bil " + dan + ".";
+      out.className = "result ok";
       out.style.display = "block";
-      return;
     }
-
-    // (Za večino datumov OK; če hočeš, lahko kasneje damo 100% UTC verzijo)
-    const d = new Date(input + "T00:00:00");
-    const dan = dnevi[d.getDay()];
-
-    out.textContent = "To je bil " + dan + ".";
-    out.className = "result ok";
-    out.style.display = "block";
-  }
-</script>
-
+  </script>
 </body>
 </html>

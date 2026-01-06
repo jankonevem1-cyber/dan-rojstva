@@ -5,39 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dobrodošel</title>
   <style>
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1020;color:#e5e7eb;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
-    .card{width:min(760px,100%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
-    h1{margin:0 0 8px;font-size:32px}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1020;color:#e5e7eb;min-height:100vh;display:flex;justify-content:center}
+    .wrap{width:min(920px,100%);padding:18px}
+    /* MENI */
+    .nav{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      padding:12px 14px; border:1px solid rgba(255,255,255,.12); border-radius:16px;
+      background:rgba(255,255,255,.06); box-shadow:0 20px 60px rgba(0,0,0,.35);
+    }
+    .brand{font-weight:1000; letter-spacing:.02em}
+    .links{display:flex; gap:8px; flex-wrap:wrap}
+    .links a{
+      text-decoration:none; color:#e5e7eb; font-weight:900;
+      padding:10px 12px; border-radius:14px; border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+    }
+    .links a:hover{filter:brightness(1.06)}
+    .links a.active{background:#2563eb;border-color:transparent}
+    /* CARD */
+    .card{margin-top:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+    h1{margin:0 0 8px;font-size:34px}
     p{margin:0 0 14px;color:rgba(229,231,235,.75)}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     @media (max-width:720px){.grid{grid-template-columns:1fr}}
-    a.box{display:block;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;background:rgba(0,0,0,.18)}
-    a.box:hover{filter:brightness(1.05)}
-    .title{font-weight:900;font-size:18px;margin:0 0 6px}
+    .box{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;background:rgba(0,0,0,.18)}
+    .title{font-weight:1000;font-size:18px;margin:0 0 6px}
     .desc{margin:0;color:rgba(229,231,235,.75);font-size:13px;line-height:1.4}
-    .hint{margin-top:12px;color:rgba(229,231,235,.7);font-size:13px}
-    code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:8px}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Dobrodošel 👋</h1>
-    <p>Izberi, kaj želiš odpreti:</p>
-
-    <div class="grid">
-      <a class="box" href="rojstni-dan.html">
-        <div class="title">📅 Dan rojstnega dne</div>
-        <p class="desc">Vpišeš datum rojstva in izpiše, kateri dan v tednu je bil.</p>
-      </a>
-
-      <a class="box" href="vreme.html">
-        <div class="title">🌦️ Vreme</div>
-        <p class="desc">Prikaže trenutno vreme in 7-dnevno napoved za izbrano mesto.</p>
-      </a>
+  <div class="wrap">
+    <div class="nav">
+      <div class="brand">Moja spletna stran</div>
+      <div class="links">
+        <a class="active" href="index.html">Domov</a>
+        <a href="rojstni-dan.html">Dan rojstnega dne</a>
+        <a href="vreme.html">Vreme</a>
+      </div>
     </div>
 
-    <div class="hint">
-      Namig: strani so <code>rojstni-dan.html</code> in <code>vreme.html</code>.
+    <div class="card">
+      <h1>Dobrodošel 👋</h1>
+      <p>Izberi, kaj želiš odpreti:</p>
+
+      <div class="grid">
+        <div class="box">
+          <div class="title">📅 Dan rojstnega dne</div>
+          <p class="desc">Vpišeš datum rojstva in izpiše, kateri dan v tednu je bil.</p>
+        </div>
+
+        <div class="box">
+          <div class="title">🌦️ Vreme</div>
+          <p class="desc">Trenutno vreme in 7-dnevna napoved za izbrano mesto.</p>
+        </div>
+      </div>
     </div>
   </div>
 </body>

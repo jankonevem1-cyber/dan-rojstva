@@ -6,34 +6,42 @@
   <title>Dan rojstnega dne</title>
 
   <style>
-   
-
     body{
-  margin:0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  background:
-    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-    url("image004.jpg");
+      background:
+        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+        url("image004.jpg");
 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
 
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.card{
-  backdrop-filter: blur(6px);
-  background: rgba(255,255,255,0.92);
-}
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
 
+    /* slika na levi */
+    .left-image {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 70vh;
+      max-width: 40vw;
+      object-fit: contain;
+      opacity: 0.9;
+      pointer-events: none;
+    }
 
-
+    /* kartica */
     .card {
-      background: white;
+      backdrop-filter: blur(6px);
+      background: rgba(255,255,255,0.92);
+
       padding: 32px;
       border-radius: 20px;
       max-width: 420px;
@@ -59,6 +67,7 @@
       border: 1px solid #ccc;
       margin-top: 12px;
       outline: none;
+      box-sizing: border-box;
     }
 
     button {
@@ -94,29 +103,22 @@
       background: #fee2e2;
       color: #7f1d1d;
     }
-  </style>
-  .left-image {
-  position: fixed;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 70vh;
-  max-width: 40vw;
-  object-fit: contain;
-  opacity: 0.9;
-  pointer-events: none;
-}
 
+    /* na telefonu skrij levo sliko */
+    @media (max-width: 768px) {
+      .left-image { display: none; }
+    }
+  </style>
 </head>
+
 <body>
-<img src="loveslika.jpg" class="left-image" alt="">
+  <img src="loveslika.jpg" class="left-image" alt="">
 
   <div class="card">
     <h1>Dan rojstnega dne</h1>
     <p>Vpiši datum rojstva in izveš, kateri dan v tednu je bil.</p>
 
     <input id="datum" type="date">
-
     <button onclick="izracunaj()">Izračunaj</button>
 
     <div id="rezultat" class="result"></div>
@@ -152,12 +154,5 @@
       out.style.display = "block";
     }
   </script>
-
 </body>
 </html>
-
-
-
-
-
-

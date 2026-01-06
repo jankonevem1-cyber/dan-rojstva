@@ -5,34 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vreme</title>
   <style>
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1020;color:#e5e7eb;min-height:100vh;display:flex;justify-content:center;padding:18px}
-    .wrap{width:min(860px,100%)}
-    .topbar{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px}
-    .topbar a{color:#e5e7eb;text-decoration:none;font-weight:900}
-    .topbar a:hover{text-decoration:underline}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1020;color:#e5e7eb;min-height:100vh;display:flex;justify-content:center}
+    .wrap{width:min(920px,100%);padding:18px}
 
-    .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+    /* MENI */
+    .nav{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      padding:12px 14px; border:1px solid rgba(255,255,255,.12); border-radius:16px;
+      background:rgba(255,255,255,.06); box-shadow:0 20px 60px rgba(0,0,0,.35);
+    }
+    .brand{font-weight:1000; letter-spacing:.02em}
+    .links{display:flex; gap:8px; flex-wrap:wrap}
+    .links a{
+      text-decoration:none; color:#e5e7eb; font-weight:900;
+      padding:10px 12px; border-radius:14px; border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+    }
+    .links a:hover{filter:brightness(1.06)}
+    .links a.active{background:#2563eb;border-color:transparent}
+
+    /* VREME CARD */
+    .card{margin-top:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
     h1{margin:0 0 10px;font-size:28px}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     select,button{padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:#e5e7eb;font-size:16px}
-    button{background:#2563eb;border:0;font-weight:900;cursor:pointer}
+    button{background:#2563eb;border:0;font-weight:1000;cursor:pointer}
     button:hover{filter:brightness(1.05)}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
     @media (max-width:740px){.grid{grid-template-columns:1fr}}
     .box{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px;background:rgba(0,0,0,.18)}
-    .big{font-size:22px;font-weight:900}
+    .big{font-size:22px;font-weight:1000}
     .muted{color:rgba(229,231,235,.75);font-size:13px}
     table{width:100%;border-collapse:collapse;margin-top:10px}
     th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.10);text-align:left}
-    th{color:rgba(229,231,235,.8);font-weight:900}
+    th{color:rgba(229,231,235,.8);font-weight:1000}
     .err{margin-top:10px;padding:10px;border-radius:14px;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.35)}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="topbar">
-      <a href="index.html">← Nazaj</a>
-      <a href="rojstni-dan.html">Dan rojstnega dne →</a>
+    <div class="nav">
+      <div class="brand">Moja spletna stran</div>
+      <div class="links">
+        <a href="index.html">Domov</a>
+        <a href="rojstni-dan.html">Dan rojstnega dne</a>
+        <a class="active" href="vreme.html">Vreme</a>
+      </div>
     </div>
 
     <div class="card">

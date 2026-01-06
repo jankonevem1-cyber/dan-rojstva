@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vreme</title>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1020;color:#e5e7eb;min-height:100vh;display:flex;justify-content:center;padding:18px}
+    .wrap{width:min(860px,100%)}
+    .topbar{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .topbar a{color:#e5e7eb;text-decoration:none;font-weight:900}
+    .topbar a:hover{text-decoration:underline}
+
+    .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+    h1{margin:0 0 10px;font-size:28px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    select,button{padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:#e5e7eb;font-size:16px}
+    button{background:#2563eb;border:0;font-weight:900;cursor:pointer}
+    button:hover{filter:brightness(1.05)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    @media (max-width:740px){.grid{grid-template-columns:1fr}}
+    .box{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px;background:rgba(0,0,0,.18)}
+    .big{font-size:22px;font-weight:900}
+    .muted{color:rgba(229,231,235,.75);font-size:13px}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.10);text-align:left}
+    th{color:rgba(229,231,235,.8);font-weight:900}
+    .err{margin-top:10px;padding:10px;border-radius:14px;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.35)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a href="index.html">← Nazaj</a>
+      <a href="rojstni-dan.html">Dan rojstnega dne →</a>
+    </div>
+
+    <div class="card">
+      <h1>Vreme</h1>
+      <div class="row">
+        <select id="mesto">
+          <option value="Ljubljana">Ljubljana</option>
+          <option value="Krško">Krško</option>
+          <option value="Maribor">Maribor</option>
+          <option value="Koper">Koper</option>
+          <option value="Celje">Celje</option>
+          <option value="Bled">Bled</option>
+        </select>
+        <button id="btn">Prikaži vreme</button>
+        <span class="muted" id="status"></span>
+      </div>
+
+      <div id="error" class="err" style="display:none"></div>
+
+      <div class="grid">
+        <div class="box">
+          <div class="muted">Trenutno</div>
+          <div class="big" id="temp">—</div>
+          <div class="muted" id="desc">—</div>
+          <div class="muted" id="wind">—</div>
+        </div>
+
+        <div class="box">
+          <div class="muted">Lokacija</div>
+          <div class="big" id="place">—</div>
+          <div class="muted" id="coords">—</div>
+          <div class="muted" id="time">—</div>
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:12px">
+        <div class="muted">7-dnevna napoved</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Min</th>
+              <th>Max</th>
+              <th>Opis</th>
+            </tr>
+          </thead>
+          <tbody id="tabela"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function opisKoda(code){
+    const m = {
+      0:"Jasno", 1:"Pretežno jasno", 2:"Delno oblačno", 3:"Oblačno",
+      45:"Megla", 48:"Megla (ivje)",
+      51:"Rahlo pršenje", 53:"Pršenje", 55:"Močno pršenje",
+      56:"Rahlo zmrz. pršenje", 57:"Močno zmrz. pršenje",
+      61:"Rahel dež", 63:"Dež", 65:"Močan dež",
+      66:"Rahlo zmrz. dež", 67:"Močno zmrz. dež",
+      71:"Rahel sneg", 73:"Sneg", 75:"Močan sneg",
+      77:"Snežne zrnca",
+      80:"Kratke plohe", 81:"Plohe", 82:"Močne plohe",
+      85:"Snežne plohe", 86:"Močne snežne plohe",
+      95:"Nevihta", 96:"Nevihta s točo", 99:"Močna nevihta s točo"
+    };
+    return m[code] ?? ("Koda: " + code);
+  }
+
+  const statusEl = document.getElementById("status");
+  const errEl = document.getElementById("error");
+
+  function setError(msg){
+    errEl.style.display = "block";
+    errEl.textContent = msg;
+  }
+  function clearError(){
+    errEl.style.display = "none";
+    errEl.textContent = "";
+  }
+
+  async function loadWeather(place){
+    clearError();
+    statusEl.textContent = "Nalagam…";
+
+    const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(place)}&count=1&language=sl&format=json`;
+    const geoRes = await fetch(geoUrl);
+    if (!geoRes.ok) throw new Error("Geocoding ni uspel.");
+    const geo = await geoRes.json();
+    if (!geo.results || geo.results.length === 0) throw new Error("Mesta ne najdem.");
+
+    const g = geo.results[0];
+    const lat = g.latitude;
+    const lon = g.longitude;
+    const disp = `${g.name}${g.admin1 ? ", " + g.admin1 : ""}${g.country ? ", " + g.country : ""}`;
+
+    const wUrl =
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      `&current=temperature_2m,wind_speed_10m,weather_code` +
+      `&daily=temperature_2m_min,temperature_2m_max,weather_code` +
+      `&timezone=auto`;
+
+    const wRes = await fetch(wUrl);
+    if (!wRes.ok) throw new Error("Vremenski podatki niso dosegljivi.");
+    const w = await wRes.json();
+
+    document.getElementById("place").textContent = disp;
+    document.getElementById("coords").textContent = `Lat ${lat.toFixed(3)}, Lon ${lon.toFixed(3)}`;
+    document.getElementById("time").textContent = `Časovni pas: ${w.timezone}`;
+
+    const temp = w.current?.temperature_2m;
+    const wind = w.current?.wind_speed_10m;
+    const code = w.current?.weather_code;
+
+    document.getElementById("temp").textContent = (temp ?? "—") + (w.current_units?.temperature_2m ?? "°C");
+    document.getElementById("desc").textContent = opisKoda(code);
+    document.getElementById("wind").textContent = `Veter: ${wind ?? "—"} ${w.current_units?.wind_speed_10m ?? "km/h"}`;
+
+    const tb = document.getElementById("tabela");
+    tb.innerHTML = "";
+
+    const dates = w.daily?.time ?? [];
+    const tmin  = w.daily?.temperature_2m_min ?? [];
+    const tmax  = w.daily?.temperature_2m_max ?? [];
+    const wcode = w.daily?.weather_code ?? [];
+
+    for (let i = 0; i < dates.length; i++){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${dates[i]}</td>
+        <td>${Math.round(tmin[i])}°C</td>
+        <td>${Math.round(tmax[i])}°C</td>
+        <td>${opisKoda(wcode[i])}</td>
+      `;
+      tb.appendChild(tr);
+    }
+
+    statusEl.textContent = "Končano ✅";
+  }
+
+  document.getElementById("btn").addEventListener("click", async () => {
+    try{
+      const place = document.getElementById("mesto").value;
+      await loadWeather(place);
+    }catch(e){
+      statusEl.textContent = "";
+      setError("Napaka: " + (e?.message || "Neznano"));
+    }
+  });
+
+  loadWeather("Ljubljana").catch(() => {});
+</script>
+</body>
+</html>
